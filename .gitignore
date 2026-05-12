@@ -20,3 +20,5 @@ models/*.pkl
 # Mac / Windows
 .DS_Store
 Thumbs.db
+
+# Windows

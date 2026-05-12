@@ -1,0 +1,20 @@
+python test_watsonx.py
+
+
+cd C:\Users\Champion\Desktop\AI_Healthcare_Agent
+
+Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
+.\ai_env\Scripts\Activate.ps1
+
+pip install ibm-watsonx-ai
+
+pip show ibm-watsonx-ai
+
+python -m streamlit run app/streamlit_app.py
+
+
+
+
+pip show ibm-watsonx-ai
+
+

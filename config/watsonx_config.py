@@ -1,0 +1,5 @@
+WATSONX_API_KEY = "YdGJVyE9AMsVWyaegZ9L9Zr7whG-2KhUJ0T-r58YfiYJ"
+WATSONX_URL = "https://api.us-south.assistant.watson.cloud.ibm.com/instances/7e115f88-c3e5-4302-954e-cbf1016feaff"
+WATSONX_PROJECT_ID = "0e25a7a1-84b5-4b1d-a834-707be4bcfbb6"
+
+

@@ -3,11 +3,6 @@ import os
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
-# Enhanced Streamlit Dashboard for AI Healthcare Agent
-
-
-
-
 import streamlit as st
 from agents.healthcare_orchestrator import run_healthcare_agent
 
@@ -22,6 +17,7 @@ st.set_page_config(
 # ---------------------------------
 
 st.title("🫀 AI Healthcare Agent")
+
 st.markdown(
     """
     ### IBM Watsonx + Multi-Agent Healthcare AI System
@@ -37,7 +33,7 @@ st.markdown(
 st.markdown("---")
 
 # ---------------------------------
-# FEATURE LABELS
+# FEATURE LABELS / ENCODINGS
 # ---------------------------------
 
 cp_options = {
@@ -81,11 +77,13 @@ ca_options = {
     "3 Major Vessels": 3
 }
 
+# ✅ FIXED THAL ENCODING
+# Matches common UCI/Kaggle heart dataset
+
 thal_options = {
-    "Unknown": 0,
-    "Normal": 1,
-    "Fixed Defect": 2,
-    "Reversible Defect": 3
+    "Normal": 3,
+    "Fixed Defect": 6,
+    "Reversible Defect": 7
 }
 
 # ---------------------------------
@@ -96,7 +94,12 @@ with st.form("patient_form"):
 
     st.subheader("📋 Patient Information")
 
-    age = st.number_input("Age", min_value=1, max_value=120, value=50)
+    age = st.number_input(
+        "Age",
+        min_value=1,
+        max_value=120,
+        value=50
+    )
 
     sex_label = st.selectbox(
         "Sex",
@@ -191,6 +194,9 @@ if submitted:
         "thal": thal_options[thal_label]
     }
 
+    # ✅ EXPLICIT FEATURE ORDER
+    # MUST match training dataset order
+
     features = [
         patient_data["age"],
         patient_data["sex"],
@@ -208,11 +214,18 @@ if submitted:
     ]
 
     try:
+
         with st.spinner("🧠 AI agents are analyzing patient data..."):
-            result = run_healthcare_agent(patient_data, features)
+
+            result = run_healthcare_agent(
+                patient_data,
+                features
+            )
 
         st.success("✅ Analysis Complete")
+
     except Exception as e:
+
         st.error(f"❌ Error during analysis: {str(e)}")
         st.stop()
 
@@ -228,13 +241,15 @@ if submitted:
 
     if "high" in triage_level.lower():
         st.error(triage_level)
+
     elif "medium" in triage_level.lower():
         st.warning(triage_level)
+
     else:
         st.success(triage_level)
 
     # ---------------------------------
-    # DIAGNOSIS DISPLAY
+    # ML DIAGNOSIS
     # ---------------------------------
 
     st.subheader("🟠 ML Diagnosis")
@@ -245,12 +260,24 @@ if submitted:
     col1, col2 = st.columns(2)
 
     with col1:
-        st.metric("Heart Disease Risk", "Yes" if prediction == 1 else "No")
+
+        # ✅ Works with string labels
+        st.metric(
+            "Heart Disease Risk",
+            prediction
+        )
 
     with col2:
-        st.metric("Risk Probability (%)", f"{probability * 100:.1f}%")
 
-    st.progress(min(probability, 1.0), text=f"Risk Score: {probability:.2f}")
+        st.metric(
+            "Risk Probability (%)",
+            f"{probability * 100:.1f}%"
+        )
+
+    st.progress(
+        min(probability, 1.0),
+        text=f"Risk Score: {probability:.2f}"
+    )
 
     # ---------------------------------
     # RISK INTERPRETATION
@@ -259,11 +286,22 @@ if submitted:
     st.subheader("📊 Risk Interpretation")
 
     if probability >= 0.80:
-        st.error("High predicted cardiovascular risk")
+
+        st.error(
+            "High predicted cardiovascular risk"
+        )
+
     elif probability >= 0.50:
-        st.warning("Moderate predicted cardiovascular risk")
+
+        st.warning(
+            "Moderate predicted cardiovascular risk"
+        )
+
     else:
-        st.success("Lower predicted cardiovascular risk")
+
+        st.success(
+            "Lower predicted cardiovascular risk"
+        )
 
     # ---------------------------------
     # WATSONX EXPLANATION
@@ -280,13 +318,15 @@ if submitted:
     st.subheader("🟢 Recommendations")
 
     for recommendation in result["recommendations"]:
+
         st.write(f"• {recommendation}")
 
     # ---------------------------------
-    # RAW PATIENT DATA
+    # RAW DATA
     # ---------------------------------
 
     with st.expander("📁 View Encoded Patient Data"):
+
         st.json(patient_data)
 
     st.markdown("---")
@@ -294,13 +334,3 @@ if submitted:
     st.caption(
         "Powered by IBM Watsonx + Streamlit + Multi-Agent AI Architecture"
     )
-
-
-
-
-
-
-
-
-
-

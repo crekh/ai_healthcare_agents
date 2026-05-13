@@ -252,7 +252,10 @@ if submitted:
     # ML DIAGNOSIS
     # ---------------------------------
 
-    st.subheader("🟠 ML Diagnosis")
+    st.subheader("🟠 ML Diagnosis (Triage-informed)")
+    st.caption(
+        "ML probability is adjusted based on the triage assessment to reflect overall risk."
+    )
 
     prediction = result["diagnosis"]["prediction"]
     probability = float(result["diagnosis"]["probability"])
@@ -261,9 +264,8 @@ if submitted:
 
     with col1:
 
-        # ✅ Works with string labels
         st.metric(
-            "Heart Disease Risk",
+            "Triage-adjusted Risk",
             prediction
         )
 

@@ -55,10 +55,7 @@ X_test_scaled = scaler.transform(X_test)
 # -----------------------------
 
 model = RandomForestClassifier(
-    n_estimators=200,
-    max_depth=5,
-    min_samples_split=5,
-    class_weight="balanced",
+    n_estimators=100,
     random_state=42
 )
 

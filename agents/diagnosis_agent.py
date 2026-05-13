@@ -1,7 +1,12 @@
 import joblib
 import numpy as np
+from pathlib import Path
 
-model = joblib.load("models/heart_model.pkl")
+BASE_DIR = Path(__file__).resolve().parent.parent
+
+model_path = BASE_DIR / "models" / "heart_model.pkl"
+
+model = joblib.load(model_path)
 
 def predict_disease(features):
     prediction = model.predict([features])[0]

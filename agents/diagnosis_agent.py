@@ -26,6 +26,7 @@ FEATURE_COLUMNS = [
     "thal"
 ]
 
+
 def predict_disease(features):
     if len(features) != model.n_features_in_:
         raise ValueError(
@@ -33,10 +34,13 @@ def predict_disease(features):
         )
 
     features_scaled = scaler.transform(pd.DataFrame([features], columns=FEATURE_COLUMNS))
-    prediction = model.predict(features_scaled)[0]
     probability = model.predict_proba(features_scaled)[0][1]
 
+    prediction = 1 if probability >= 0.40 else 0
+
+    risk_label = "High Risk" if prediction == 1 else "Low Risk"
+
     return {
-        "prediction": int(prediction),
-        "probability": float(probability)
+        "prediction": risk_label,
+        "probability": round(float(probability), 2)
     }

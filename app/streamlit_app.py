@@ -8,7 +8,6 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
 
 
-from altair import Color
 import streamlit as st
 from agents.healthcare_orchestrator import run_healthcare_agent
 
@@ -192,13 +191,30 @@ if submitted:
         "thal": thal_options[thal_label]
     }
 
-    features = list(patient_data.values())
+    features = [
+        patient_data["age"],
+        patient_data["sex"],
+        patient_data["cp"],
+        patient_data["trestbps"],
+        patient_data["chol"],
+        patient_data["fbs"],
+        patient_data["restecg"],
+        patient_data["thalach"],
+        patient_data["exang"],
+        patient_data["oldpeak"],
+        patient_data["slope"],
+        patient_data["ca"],
+        patient_data["thal"]
+    ]
 
-    with st.spinner("🧠 AI agents are analyzing patient data..."):
+    try:
+        with st.spinner("🧠 AI agents are analyzing patient data..."):
+            result = run_healthcare_agent(patient_data, features)
 
-        result = run_healthcare_agent(patient_data, features)
-
-    st.success("✅ Analysis Complete")
+        st.success("✅ Analysis Complete")
+    except Exception as e:
+        st.error(f"❌ Error during analysis: {str(e)}")
+        st.stop()
 
     st.markdown("---")
 
@@ -229,12 +245,12 @@ if submitted:
     col1, col2 = st.columns(2)
 
     with col1:
-        st.metric("Prediction", prediction)
+        st.metric("Heart Disease Risk", "Yes" if prediction == 1 else "No")
 
     with col2:
-        st.metric("Risk Probability", f"{probability:.2f}")
+        st.metric("Risk Probability (%)", f"{probability * 100:.1f}%")
 
-    st.progress(min(probability, 1.0))
+    st.progress(min(probability, 1.0), text=f"Risk Score: {probability:.2f}")
 
     # ---------------------------------
     # RISK INTERPRETATION

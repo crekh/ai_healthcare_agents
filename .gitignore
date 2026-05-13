@@ -8,8 +8,6 @@ ai_env/
 # Streamlit Secrets
 .streamlit/secrets.toml
 
-# Model Artifacts
-models/*.pkl
 
 # Jupyter
 .ipynb_checkpoints/

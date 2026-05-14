@@ -335,13 +335,13 @@ if submitted:
 
     st.subheader("📊 Risk Interpretation")
 
-    if probability >= 0.80:
+    if overall_risk == "HIGH RISK":
 
         st.error(
             "The ML model predicts a high likelihood of cardiovascular disease based on the provided clinical indicators."
         )
 
-    elif probability >= 0.50:
+    elif overall_risk == "MODERATE RISK":
 
         st.warning(
             "The ML model predicts a moderate cardiovascular risk profile."

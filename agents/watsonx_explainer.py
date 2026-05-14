@@ -18,6 +18,6 @@ def explain_result(input_data, prediction, probability):
     Do not provide diagnosis. Only interpretation.
     """
 
-    response = model.generate(prompt)
+    response = model.generate_text(prompt)
 
-    return response["results"][0]["generated_text"]
+    return response

@@ -259,6 +259,15 @@ if submitted:
 
     prediction = result["diagnosis"]["prediction"]
     probability = float(result["diagnosis"]["probability"])
+    triage_level = result["triage_level"]
+
+    adjusted_probability = probability
+    if triage_level == "HIGH":
+        adjusted_probability = max(adjusted_probability, 0.80)
+    elif triage_level == "MEDIUM":
+        adjusted_probability = max(adjusted_probability, 0.55)
+
+    display_prediction = "High Risk" if adjusted_probability >= 0.40 else "Low Risk"
 
     col1, col2 = st.columns(2)
 
@@ -266,19 +275,19 @@ if submitted:
 
         st.metric(
             "Triage-adjusted Risk",
-            prediction
+            display_prediction
         )
 
     with col2:
 
         st.metric(
             "Risk Probability (%)",
-            f"{probability * 100:.1f}%"
+            f"{adjusted_probability * 100:.1f}%"
         )
 
     st.progress(
-        min(probability, 1.0),
-        text=f"Risk Score: {probability:.2f}"
+        min(adjusted_probability, 1.0),
+        text=f"Risk Score: {adjusted_probability:.2f}"
     )
 
     # ---------------------------------

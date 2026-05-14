@@ -81,9 +81,9 @@ ca_options = {
 # Matches common UCI/Kaggle heart dataset
 
 thal_options = {
-    "Normal": 3,
-    "Fixed Defect": 6,
-    "Reversible Defect": 7
+    "Normal": 1,
+    "Fixed Defect": 2,
+    "Reversible Defect": 3
 }
 
 # ---------------------------------
@@ -252,67 +252,111 @@ if submitted:
     # ML DIAGNOSIS
     # ---------------------------------
 
-    st.subheader("🟠 ML Diagnosis (Triage-informed)")
-    st.caption(
-        "ML probability is adjusted based on the triage assessment to reflect overall risk."
+    # ---------------------------------
+# ML DIAGNOSIS
+# ---------------------------------
+
+st.subheader("🟠 ML Diagnosis")
+
+prediction = result["diagnosis"]["prediction"]
+probability = float(result["diagnosis"]["probability"])
+
+col1, col2 = st.columns(2)
+
+with col1:
+
+    st.metric(
+        "ML Predicted Risk",
+        prediction
     )
 
-    prediction = result["diagnosis"]["prediction"]
-    probability = float(result["diagnosis"]["probability"])
-    triage_level = result["triage_level"]
+with col2:
 
-    adjusted_probability = probability
-    if triage_level == "HIGH":
-        adjusted_probability = max(adjusted_probability, 0.80)
-    elif triage_level == "MEDIUM":
-        adjusted_probability = max(adjusted_probability, 0.55)
-
-    display_prediction = "High Risk" if adjusted_probability >= 0.40 else "Low Risk"
-
-    col1, col2 = st.columns(2)
-
-    with col1:
-
-        st.metric(
-            "Triage-adjusted Risk",
-            display_prediction
-        )
-
-    with col2:
-
-        st.metric(
-            "Risk Probability (%)",
-            f"{adjusted_probability * 100:.1f}%"
-        )
-
-    st.progress(
-        min(adjusted_probability, 1.0),
-        text=f"Risk Score: {adjusted_probability:.2f}"
+    st.metric(
+        "ML Risk Probability",
+        f"{probability * 100:.1f}%"
     )
 
-    # ---------------------------------
-    # RISK INTERPRETATION
-    # ---------------------------------
+st.progress(
+    min(probability, 1.0),
+    text=f"ML Risk Score: {probability:.2f}"
+)
 
-    st.subheader("📊 Risk Interpretation")
+# ---------------------------------
+# COMBINED AI ASSESSMENT
+# ---------------------------------
 
-    if probability >= 0.80:
+st.subheader("🧠 Combined AI Assessment")
 
-        st.error(
-            "High predicted cardiovascular risk"
-        )
+triage_level = result["triage_level"]
 
-    elif probability >= 0.50:
+# Combine triage + ML intelligently
 
-        st.warning(
-            "Moderate predicted cardiovascular risk"
-        )
+if (
+    "high" in triage_level.lower()
+    or probability >= 0.70
+):
 
-    else:
+    overall_risk = "HIGH RISK"
+    overall_color = "error"
 
-        st.success(
-            "Lower predicted cardiovascular risk"
-        )
+elif (
+    "medium" in triage_level.lower()
+    or probability >= 0.40
+):
+
+    overall_risk = "MODERATE RISK"
+    overall_color = "warning"
+
+else:
+
+    overall_risk = "LOW RISK"
+    overall_color = "success"
+
+# Display overall assessment
+
+if overall_color == "error":
+
+    st.error(
+        f"Overall Assessment: {overall_risk}"
+    )
+
+elif overall_color == "warning":
+
+    st.warning(
+        f"Overall Assessment: {overall_risk}"
+    )
+
+else:
+
+    st.success(
+        f"Overall Assessment: {overall_risk}"
+    )
+
+# ---------------------------------
+# RISK INTERPRETATION
+# ---------------------------------
+
+st.subheader("📊 Risk Interpretation")
+
+if probability >= 0.80:
+
+    st.error(
+        "The ML model predicts a high likelihood of cardiovascular disease based on the provided clinical indicators."
+    )
+
+elif probability >= 0.50:
+
+    st.warning(
+        "The ML model predicts a moderate cardiovascular risk profile."
+    )
+
+else:
+
+    st.success(
+        "The ML model predicts a relatively lower cardiovascular risk profile."
+    )
+
 
     # ---------------------------------
     # WATSONX EXPLANATION

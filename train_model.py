@@ -27,7 +27,12 @@ df = load_data("data/heart.csv")
 # -----------------------------
 
 X = df.drop("target", axis=1)
-y = df["target"]
+
+#Flip labels so:
+#1 = disease
+#0 = healthy
+
+y = 1 - df["target"]
 
 # -----------------------------
 # TRAIN TEST SPLIT
@@ -55,7 +60,10 @@ X_test_scaled = scaler.transform(X_test)
 # -----------------------------
 
 model = RandomForestClassifier(
-    n_estimators=100,
+    n_estimators=200,
+    max_depth=5,
+    min_samples_split=5,
+    class_weight="balanced",
     random_state=42
 )
 

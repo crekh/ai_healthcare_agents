@@ -252,111 +252,106 @@ if submitted:
     # ML DIAGNOSIS
     # ---------------------------------
 
+    st.subheader("🟠 ML Diagnosis")
+
+    prediction = result["diagnosis"]["prediction"]
+    probability = float(result["diagnosis"]["probability"])
+
+    col1, col2 = st.columns(2)
+
+    with col1:
+
+        st.metric(
+            "ML Predicted Risk",
+            prediction
+        )
+
+    with col2:
+
+        st.metric(
+            "ML Risk Probability",
+            f"{probability * 100:.1f}%"
+        )
+
+    st.progress(
+        min(probability, 1.0),
+        text=f"ML Risk Score: {probability:.2f}"
+    )
+
     # ---------------------------------
-# ML DIAGNOSIS
-# ---------------------------------
+    # COMBINED AI ASSESSMENT
+    # ---------------------------------
 
-st.subheader("🟠 ML Diagnosis")
+    st.subheader("🧠 Combined AI Assessment")
 
-prediction = result["diagnosis"]["prediction"]
-probability = float(result["diagnosis"]["probability"])
+    triage_level = result["triage_level"]
 
-col1, col2 = st.columns(2)
+    # Combine triage + ML intelligently
 
-with col1:
+    if (
+        "high" in triage_level.lower()
+        or probability >= 0.70
+    ):
 
-    st.metric(
-        "ML Predicted Risk",
-        prediction
-    )
+        overall_risk = "HIGH RISK"
+        overall_color = "error"
 
-with col2:
+    elif (
+        "medium" in triage_level.lower()
+        or probability >= 0.40
+    ):
 
-    st.metric(
-        "ML Risk Probability",
-        f"{probability * 100:.1f}%"
-    )
+        overall_risk = "MODERATE RISK"
+        overall_color = "warning"
 
-st.progress(
-    min(probability, 1.0),
-    text=f"ML Risk Score: {probability:.2f}"
-)
+    else:
 
-# ---------------------------------
-# COMBINED AI ASSESSMENT
-# ---------------------------------
+        overall_risk = "LOW RISK"
+        overall_color = "success"
 
-st.subheader("🧠 Combined AI Assessment")
+    # Display overall assessment
 
-triage_level = result["triage_level"]
+    if overall_color == "error":
 
-# Combine triage + ML intelligently
+        st.error(
+            f"Overall Assessment: {overall_risk}"
+        )
 
-if (
-    "high" in triage_level.lower()
-    or probability >= 0.70
-):
+    elif overall_color == "warning":
 
-    overall_risk = "HIGH RISK"
-    overall_color = "error"
+        st.warning(
+            f"Overall Assessment: {overall_risk}"
+        )
 
-elif (
-    "medium" in triage_level.lower()
-    or probability >= 0.40
-):
+    else:
 
-    overall_risk = "MODERATE RISK"
-    overall_color = "warning"
+        st.success(
+            f"Overall Assessment: {overall_risk}"
+        )
 
-else:
+    # ---------------------------------
+    # RISK INTERPRETATION
+    # ---------------------------------
 
-    overall_risk = "LOW RISK"
-    overall_color = "success"
+    st.subheader("📊 Risk Interpretation")
 
-# Display overall assessment
+    if probability >= 0.80:
 
-if overall_color == "error":
+        st.error(
+            "The ML model predicts a high likelihood of cardiovascular disease based on the provided clinical indicators."
+        )
 
-    st.error(
-        f"Overall Assessment: {overall_risk}"
-    )
+    elif probability >= 0.50:
 
-elif overall_color == "warning":
+        st.warning(
+            "The ML model predicts a moderate cardiovascular risk profile."
+        )
 
-    st.warning(
-        f"Overall Assessment: {overall_risk}"
-    )
+    else:
 
-else:
-
-    st.success(
-        f"Overall Assessment: {overall_risk}"
-    )
-
-# ---------------------------------
-# RISK INTERPRETATION
-# ---------------------------------
-
-st.subheader("📊 Risk Interpretation")
-
-if probability >= 0.80:
-
-    st.error(
-        "The ML model predicts a high likelihood of cardiovascular disease based on the provided clinical indicators."
-    )
-
-elif probability >= 0.50:
-
-    st.warning(
-        "The ML model predicts a moderate cardiovascular risk profile."
-    )
-
-else:
-
-    st.success(
-        "The ML model predicts a relatively lower cardiovascular risk profile."
-    )
-
+        st.success(
+            "The ML model predicts a relatively lower cardiovascular risk profile."
+        )
 
     # ---------------------------------
     # WATSONX EXPLANATION

@@ -384,3 +384,18 @@ if submitted:
     st.caption(
         "Powered by IBM Watsonx + Streamlit + Multi-Agent AI Architecture"
     )
+
+    # ---------------------------------
+    # RESET BUTTON
+    # ---------------------------------
+
+    st.markdown("---")
+
+    col1, col2, col3 = st.columns([1, 1, 1])
+
+    with col2:
+
+        if st.button("🔄 Analyze Another Patient"):
+
+            st.session_state.clear()
+            st.rerun()

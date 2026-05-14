@@ -19,5 +19,8 @@ def explain_result(input_data, prediction, probability):
     """
 
     response = model.generate_text(prompt)
+    
+    # Clean up response: remove triple quotes and extra whitespace
+    response = response.strip().strip('"""').strip()
 
     return response
